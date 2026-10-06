@@ -39,7 +39,7 @@ services:
 
   ################################################################################
 
-  cdp-node-backend-template:
+  apha-risk-insights-backend:
     build:
       context: .
       target: development
