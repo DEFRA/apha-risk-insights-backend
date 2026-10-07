@@ -1,0 +1,21 @@
+services:
+  apha-risk-insights-backend:
+    build:
+      target: development
+    image: apha-risk-insights-backend-development
+    container_name: apha-risk-insights-backend-test
+    command: npm test
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    environment:
+      PORT: 3001
+      NODE_ENV: test
+      MONGO_URI: mongodb://mongodb:27017/
+    volumes:
+      - ./test:/home/node/test
+      - ./vitest.config.js:/home/node/vitest.config.js
+      - ./coverage:/home/node/coverage
+      - ./src:/home/node/src
+      - ./package.json:/home/node/package.json
+      - ./.vite:/home/node/.vite
