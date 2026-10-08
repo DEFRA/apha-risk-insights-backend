@@ -18,4 +18,3 @@ services:
       - ./coverage:/home/node/coverage
       - ./src:/home/node/src
       - ./package.json:/home/node/package.json
-      - ./.vite:/home/node/.vite
