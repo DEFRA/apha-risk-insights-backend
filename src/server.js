@@ -1,4 +1,5 @@
 import Hapi from '@hapi/hapi'
+import Inert from '@hapi/inert'
 
 import { secureContext } from '@defra/hapi-secure-context'
 
@@ -51,6 +52,7 @@ export async function createServer() {
     metrics,
     secureContext,
     pulse,
+    Inert,
     {
       plugin: mongoDb,
       options: config.get('mongo')
