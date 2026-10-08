@@ -10,9 +10,13 @@ export const router = {
   plugin: {
     name: 'router',
     register: (server, _options) => {
-      server.route(
-        [health, documentation, openApiSpec, swaggerAssets].concat(example)
-      )
+      server.route([
+        health,
+        documentation,
+        openApiSpec,
+        swaggerAssets,
+        ...example
+      ])
     }
   }
 }

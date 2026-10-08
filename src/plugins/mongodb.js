@@ -1,6 +1,8 @@
 import { MongoClient } from 'mongodb'
 import { LockManager } from 'mongo-locks'
 
+const LOCKS_COLLECTION = 'mongo-locks'
+
 export const mongoDb = {
   plugin: {
     name: 'mongodb',
@@ -8,13 +10,11 @@ export const mongoDb = {
     register: async function (server, options) {
       server.logger.info('Setting up MongoDb')
 
-      const client = await MongoClient.connect(options.mongoUrl, {
-        ...options.mongoOptions
-      })
+      const { mongoUrl, mongoOptions, databaseName } = options
+      const client = await MongoClient.connect(mongoUrl, mongoOptions)
 
-      const databaseName = options.databaseName
       const db = client.db(databaseName)
-      const locker = new LockManager(db.collection('mongo-locks'))
+      const locker = new LockManager(db.collection(LOCKS_COLLECTION))
 
       await createIndexes(db)
 
@@ -39,7 +39,7 @@ export const mongoDb = {
 }
 
 async function createIndexes(db) {
-  await db.collection('mongo-locks').createIndex({ id: 1 })
+  await db.collection(LOCKS_COLLECTION).createIndex({ id: 1 })
 
   // Example of how to create a mongodb index. Remove as required
   await db.collection('example-data').createIndex({ id: 1 })

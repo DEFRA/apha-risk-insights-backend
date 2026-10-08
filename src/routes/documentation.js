@@ -52,30 +52,24 @@ export const openApiSpec = {
     h.file(openApiPath, { confine: false }).type('application/yaml')
 }
 
+const swaggerAssetTypes = {
+  'swagger-ui.css': 'text/css',
+  'swagger-ui-bundle.js': 'application/javascript',
+  'swagger-ui-standalone-preset.js': 'application/javascript'
+}
+
 export const swaggerAssets = {
   method: 'GET',
   path: '/documentation/{asset}',
-  handler: (_request, h) => {
-    const asset = _request.params.asset
-    const allowedAssets = [
-      'swagger-ui.css',
-      'swagger-ui-bundle.js',
-      'swagger-ui-standalone-preset.js'
-    ]
+  handler: (request, h) => {
+    const { asset } = request.params
 
-    if (!allowedAssets.includes(asset)) {
+    if (!Object.hasOwn(swaggerAssetTypes, asset)) {
       return h.response({ error: 'Not found' }).code(404)
     }
 
-    const assetPath = path.join(swaggerUiDistPath, asset)
-    const response = h.file(assetPath, { confine: false })
-
-    if (asset.endsWith('.js')) {
-      response.type('application/javascript')
-    } else if (asset.endsWith('.css')) {
-      response.type('text/css')
-    }
-
-    return response
+    return h
+      .file(path.join(swaggerUiDistPath, asset), { confine: false })
+      .type(swaggerAssetTypes[asset])
   }
 }

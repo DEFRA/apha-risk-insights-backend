@@ -1,13 +1,12 @@
-export function findAllExampleData(db) {
-  const cursor = db
-    .collection('example-data')
-    .find({}, { projection: { _id: 0 } })
+const EXAMPLE_COLLECTION = 'example-data'
+const WITHOUT_MONGO_ID = { projection: { _id: 0 } }
 
-  return cursor.toArray()
+export function findAllExampleData(db) {
+  return db.collection(EXAMPLE_COLLECTION).find({}, WITHOUT_MONGO_ID).toArray()
 }
 
 export function findExampleData(db, id) {
   return db
-    .collection('example-data')
-    .findOne({ exampleId: id }, { projection: { _id: 0 } })
+    .collection(EXAMPLE_COLLECTION)
+    .findOne({ exampleId: id }, WITHOUT_MONGO_ID)
 }
