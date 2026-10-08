@@ -32,7 +32,7 @@ jobs:
           npm ci
           npm run format:check
           npm run lint
-          npm run docker:test
+          docker compose -p apha-risk-insights-backend-test -f compose.yaml -f compose.test.yaml run --build --rm apha-risk-insights-backend
 
       - name: Test Docker Image Build
         run: |
