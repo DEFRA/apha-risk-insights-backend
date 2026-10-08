@@ -6,7 +6,6 @@ describe('#mongoDb', () => {
 
   describe('Set up', () => {
     beforeAll(async () => {
-      // Dynamic import needed due to config being updated by vitest-mongodb
       const { createServer } = await import('#/server.js')
 
       server = await createServer()
@@ -30,7 +29,6 @@ describe('#mongoDb', () => {
 
   describe('Shut down', () => {
     beforeAll(async () => {
-      // Dynamic import needed due to config being updated by vitest-mongodb
       const { createServer } = await import('#/server.js')
 
       server = await createServer()

@@ -196,14 +196,27 @@ docker run -e PORT=3001 -p 3001:3001 apha-risk-insights-backend
 A local environment with:
 
 - Floci for AWS services (S3, SQS, SNS etc)
-- Redis
 - MongoDB
 - This service.
-- A commented out frontend example.
+
+Compose files:
+
+- `compose.yaml` — base services, no published ports.
+- `compose.override.yaml` — host ports for dev. Auto-loaded by `docker compose up` (no `-f` flags).
+- `compose.debug.yaml` — runs the service with the Node inspector attached.
+- `compose.test.yaml` — runs the test suite in a dedicated container, no published ports.
+- `compose.test.watch.yaml` — runs the test suite in watch mode.
 
 ```bash
-docker compose up --build -d
+npm run docker:up        # dev stack: apha API + MongoDB + Floci on 3001/27017/4566
+npm run docker:debug     # dev stack with the Node inspector on 9229
+npm run docker:test      # one-shot test run, isolated project, no port clashes with dev
+npm run docker:test:watch
 ```
+
+The test stack runs under its own Compose project name
+(`apha-risk-insights-backend-test`) so it can run alongside the dev stack
+without clashing on ports, container names, or Mongo data.
 
 Mock AWS resources can be created when Floci starts up by editing the scripts in `./compose/floci/start.d/`.
 MongoDB records can also be created when Mongo starts by editing the scripts in `./compose/mongo/`.

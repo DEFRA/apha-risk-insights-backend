@@ -1,0 +1,6 @@
+services:
+  apha-risk-insights-backend:
+    command: npm run dev:debug
+    ports:
+      - '3001:3001'
+      - '9229:9229'

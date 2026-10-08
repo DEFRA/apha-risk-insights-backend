@@ -1,0 +1,13 @@
+services:
+  apha-risk-insights-backend:
+    ports:
+      - '3001:3001'
+      - '9229:9229'
+
+  floci:
+    ports:
+      - '4566:4566'
+
+  mongodb:
+    ports:
+      - '27017:27017'
