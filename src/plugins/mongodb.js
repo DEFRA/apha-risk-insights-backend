@@ -1,5 +1,6 @@
 import { LockManager } from 'mongo-locks'
 
+import { applyCollectionValidators } from '#/data/collections.js'
 import { closeMongo, connectMongo, getClient } from '#/data/db.js'
 
 const LOCKS_COLLECTION = 'mongo-locks'
@@ -12,9 +13,15 @@ export const mongoDb = {
       server.logger.info('Setting up MongoDb')
 
       const db = await connectMongo(options)
-      const locker = new LockManager(db.collection(LOCKS_COLLECTION))
+      const locksCollection = db.collection(LOCKS_COLLECTION)
+      const locker = new LockManager(locksCollection)
 
-      await db.collection(LOCKS_COLLECTION).createIndex({ id: 1 })
+      // LockManager starts creating its indexes in the constructor and only
+      // awaits them on first lock(). Await them here so a shutdown can't close
+      // the client mid-build and leave an unhandled MongoClientClosedError.
+      await locker.ready
+      await locksCollection.createIndex({ id: 1 })
+      await applyCollectionValidators(db)
 
       server.logger.info(`MongoDb connected to ${db.databaseName}`)
 
