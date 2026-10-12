@@ -21,13 +21,12 @@
     "docker:test:watch": "docker compose -p apha-risk-insights-backend-test down -v && docker compose -f compose.yaml -f compose.test.yaml -f compose.test.watch.yaml -p apha-risk-insights-backend-test run --build --rm apha-risk-insights-backend",
     "format": "prettier --write \"**/*.{cjs,js,json,md}\"",
     "format:check": "prettier --check \"**/*.{cjs,js,json,md}\"",
-    "git:pre-commit-hook": "npm run security-audit && npm run format:check && npm run lint && npm test",
+    "check:all": "npm run security-audit && npm run format:check && npm run lint && npm test",
     "lint": "eslint --cache --cache-strategy content \"**/*.{cjs,js}\"",
     "lint:fix": "npm run lint -- --fix",
     "security-audit": "npm audit --audit-level=critical",
     "server:debug": "node --watch --inspect-brk=0.0.0.0 $([ -f .env ] && echo --env-file=.env) ./src",
     "server:watch": "node --watch --inspect=0.0.0.0 $([ -f .env ] && echo --env-file=.env) ./src",
-    "setup:husky": "node -e \"try { (await import('husky')).default() } catch (e) { if (e.code !== 'ERR_MODULE_NOT_FOUND') throw e }\" --input-type module",
     "start": "NODE_ENV=production node . --env-file-if-exists=.env",
     "test": "TZ=UTC vitest run --coverage",
     "test:watch": "TZ=UTC vitest"
@@ -62,7 +61,6 @@
   "devDependencies": {
     "@vitest/coverage-v8": "5.0.3",
     "eslint": "9.39.5",
-    "husky": "9.1.7",
     "neostandard": "0.13.0",
     "npm-run-all": "4.1.5",
     "postcss": "8.5.28",

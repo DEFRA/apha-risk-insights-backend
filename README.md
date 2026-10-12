@@ -52,11 +52,43 @@ npm install
 
 ### Git hooks
 
-Install git hooks (optional)
+Git hooks are managed by [pre-commit](https://pre-commit.com/) (see
+[.pre-commit-config.yaml](./.pre-commit-config.yaml)). On commit they run
+[detect-secrets](https://github.com/Yelp/detect-secrets), ESLint (with `--fix`)
+and Prettier.
+
+Install pre-commit, then install the hooks once after cloning:
 
 ```bash
-npm run git:hooks
+pip install pre-commit   # or: pipx install pre-commit
+pre-commit install
 ```
+
+To run the hooks against every file without committing:
+
+```bash
+pre-commit run --all-files
+```
+
+To run the full check suite (security audit, format check, lint and tests)
+manually or in CI:
+
+```bash
+npm run check:all
+```
+
+#### Secrets baseline
+
+`.secrets.baseline` records known, accepted findings so `detect-secrets` only
+flags new ones. It was generated once with:
+
+```bash
+pip install detect-secrets
+detect-secrets scan > .secrets.baseline
+```
+
+If the hook flags a false positive, update the baseline with
+`detect-secrets scan --baseline .secrets.baseline` and commit the result.
 
 ### Development
 
