@@ -23,7 +23,6 @@ updates:
 
       tools:
         patterns:
-          - 'husky'
           - 'vitest'
           - 'nodemon'
           - 'npm-run-all'
