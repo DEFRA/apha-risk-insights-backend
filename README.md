@@ -146,11 +146,10 @@ git config --global core.autocrlf false
 
 ## API endpoints
 
-| Endpoint             | Description                    |
-| :------------------- | :----------------------------- |
-| `GET: /health`       | Health                         |
-| `GET: /example    `  | Example API (remove as needed) |
-| `GET: /example/<id>` | Example API (remove as needed) |
+| Endpoint              | Description           |
+| :-------------------- | :-------------------- |
+| `GET: /health`        | Health                |
+| `GET: /documentation` | OpenAPI documentation |
 
 ## Development helpers
 
