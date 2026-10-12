@@ -17,36 +17,6 @@ paths:
                   message:
                     type: string
                     example: success
-  /example:
-    get:
-      summary: List all example data
-      responses:
-        '200':
-          description: List of example entities
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Example'
-  /example/{exampleId}:
-    get:
-      summary: Get one example entity
-      parameters:
-        - name: exampleId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: The example entity
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Example'
-        '404':
-          description: Entity not found
   /documentation:
     get:
       summary: This OpenAPI document
@@ -57,11 +27,3 @@ paths:
             application/yaml:
               schema:
                 type: string
-components:
-  schemas:
-    Example:
-      type: object
-      properties:
-        exampleId:
-          type: string
-      additionalProperties: true
