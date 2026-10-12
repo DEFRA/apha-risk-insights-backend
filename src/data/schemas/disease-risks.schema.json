@@ -1,0 +1,150 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "title": "Disease risk",
+    "required": ["_id", "disease", "risk", "risk_history"],
+    "additionalProperties": false,
+    "properties": {
+      "_id": {
+        "bsonType": "string",
+        "description": "UUID stored as a string",
+        "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+      },
+      "disease": {
+        "bsonType": "object",
+        "description": "Disease code and full name, which must be a known matching pair",
+        "required": ["code", "name"],
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "bsonType": "string",
+            "enum": ["FMD", "ASF", "HPAI", "AHS", "BTV"]
+          },
+          "name": {
+            "bsonType": "string",
+            "enum": [
+              "Foot and Mouth Disease",
+              "African Swine Fever",
+              "Highly Pathogenic Avian Influenza",
+              "African Horse Sickness",
+              "Bluetongue"
+            ]
+          }
+        },
+        "oneOf": [
+          {
+            "properties": {
+              "code": { "enum": ["FMD"] },
+              "name": { "enum": ["Foot and Mouth Disease"] }
+            }
+          },
+          {
+            "properties": {
+              "code": { "enum": ["ASF"] },
+              "name": { "enum": ["African Swine Fever"] }
+            }
+          },
+          {
+            "properties": {
+              "code": { "enum": ["HPAI"] },
+              "name": { "enum": ["Highly Pathogenic Avian Influenza"] }
+            }
+          },
+          {
+            "properties": {
+              "code": { "enum": ["AHS"] },
+              "name": { "enum": ["African Horse Sickness"] }
+            }
+          },
+          {
+            "properties": {
+              "code": { "enum": ["BTV"] },
+              "name": { "enum": ["Bluetongue"] }
+            }
+          }
+        ]
+      },
+      "strain": {
+        "bsonType": "string",
+        "description": "Optional; omitted when the data has no strain",
+        "minLength": 1
+      },
+      "risk": {
+        "bsonType": "object",
+        "description": "Current risk assessment",
+        "required": [
+          "status",
+          "previous_status",
+          "level_change",
+          "source",
+          "date_reported"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "status": {
+            "bsonType": "string",
+            "enum": ["negligible", "very low", "low", "medium", "high"]
+          },
+          "previous_status": {
+            "bsonType": ["string", "null"],
+            "description": "null when there is no prior assessment",
+            "enum": ["negligible", "very low", "low", "medium", "high", null]
+          },
+          "level_change": {
+            "bsonType": "string",
+            "enum": ["deteriorating", "no change", "improving", "undetermined"]
+          },
+          "source": {
+            "bsonType": "string",
+            "minLength": 1
+          },
+          "date_reported": {
+            "bsonType": "date"
+          }
+        }
+      },
+      "risk_history": {
+        "bsonType": "array",
+        "description": "Past risk assessments only; the current one lives in `risk`",
+        "items": {
+          "bsonType": "object",
+          "required": [
+            "status",
+            "previous_status",
+            "level_change",
+            "source",
+            "date_reported"
+          ],
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "bsonType": "string",
+              "enum": ["negligible", "very low", "low", "medium", "high"]
+            },
+            "previous_status": {
+              "bsonType": ["string", "null"],
+              "description": "null when there is no prior assessment",
+              "enum": ["negligible", "very low", "low", "medium", "high", null]
+            },
+            "level_change": {
+              "bsonType": "string",
+              "enum": [
+                "deteriorating",
+                "no change",
+                "improving",
+                "undetermined"
+              ]
+            },
+            "source": {
+              "bsonType": "string",
+              "minLength": 1
+            },
+            "date_reported": {
+              "bsonType": "date"
+            }
+          }
+        }
+      }
+    }
+  }
+}

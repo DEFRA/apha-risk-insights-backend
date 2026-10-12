@@ -2,7 +2,7 @@
 
 ## Status
 
-Accepted
+Superseded by `validate-with-mongo-jsonschema-only.adr.md`.
 
 ## Context
 

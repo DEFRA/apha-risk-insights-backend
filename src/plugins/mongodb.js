@@ -1,5 +1,7 @@
-import { MongoClient } from 'mongodb'
 import { LockManager } from 'mongo-locks'
+
+import { applyCollectionValidators } from '#/data/collections.js'
+import { closeMongo, connectMongo, getClient } from '#/data/db.js'
 
 const LOCKS_COLLECTION = 'mongo-locks'
 
@@ -10,17 +12,20 @@ export const mongoDb = {
     register: async function (server, options) {
       server.logger.info('Setting up MongoDb')
 
-      const { mongoUrl, mongoOptions, databaseName } = options
-      const client = await MongoClient.connect(mongoUrl, mongoOptions)
+      const db = await connectMongo(options)
+      const locksCollection = db.collection(LOCKS_COLLECTION)
+      const locker = new LockManager(locksCollection)
 
-      const db = client.db(databaseName)
-      const locker = new LockManager(db.collection(LOCKS_COLLECTION))
+      // LockManager starts creating its indexes in the constructor and only
+      // awaits them on first lock(). Await them here so a shutdown can't close
+      // the client mid-build and leave an unhandled MongoClientClosedError.
+      await locker.ready
+      await locksCollection.createIndex({ id: 1 })
+      await applyCollectionValidators(db)
 
-      await createIndexes(db)
+      server.logger.info(`MongoDb connected to ${db.databaseName}`)
 
-      server.logger.info(`MongoDb connected to ${databaseName}`)
-
-      server.decorate('server', 'mongoClient', client)
+      server.decorate('server', 'mongoClient', getClient())
       server.decorate('server', 'db', db)
       server.decorate('server', 'locker', locker)
       server.decorate('request', 'db', () => db, { apply: true })
@@ -29,18 +34,11 @@ export const mongoDb = {
       server.events.on('stop', async () => {
         server.logger.info('Closing Mongo client')
         try {
-          await client.close(true)
+          await closeMongo()
         } catch (e) {
           server.logger.error(e, 'failed to close mongo client')
         }
       })
     }
   }
-}
-
-async function createIndexes(db) {
-  await db.collection(LOCKS_COLLECTION).createIndex({ id: 1 })
-
-  // Example of how to create a mongodb index. Remove as required
-  await db.collection('example-data').createIndex({ id: 1 })
 }

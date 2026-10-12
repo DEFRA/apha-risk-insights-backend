@@ -5,16 +5,28 @@ services:
     image: apha-risk-insights-backend-development
     container_name: apha-risk-insights-backend-test
     command: npm test
-    depends_on:
-      mongodb:
+    # Use mongo-test, not the dev `mongodb` service, so the shared apha-risk
+    # network never has two containers answering to the same hostname
+    links: !override
+      - 'floci:floci'
+    depends_on: !override
+      floci:
+        condition: service_healthy
+      mongo-test:
         condition: service_healthy
     environment:
       PORT: 3001
       NODE_ENV: test
-      MONGO_URI: mongodb://mongodb:27017/
+      MONGO_URI: mongodb://mongo-test:27017/
     volumes:
       - ./test:/home/node/test
       - ./vitest.config.js:/home/node/vitest.config.js
       - ./coverage:/home/node/coverage
       - ./src:/home/node/src
       - ./package.json:/home/node/package.json
+
+  mongo-test:
+    extends:
+      file: compose.yaml
+      service: mongodb
+    container_name: mongo-test

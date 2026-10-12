@@ -13,6 +13,7 @@ Instructions for AI agents working on apha-risk-insights-backend.
 - Test Compose project name: `apha-risk-insights-backend-test` (always pass `-p` explicitly)
 - Docker network: `apha-risk` (pinned, shared by dev and test)
 - Container names: `apha-risk-insights-backend-development` (dev), `apha-risk-insights-backend-test` (test)
+- Mongo hostnames: `mongodb` (dev), `mongo-test` (test). The test project never starts a `mongodb` service, so `mongodb` on the shared network always means the dev database.
 
 ## Standing decisions — do not re-litigate
 

@@ -1,6 +1,9 @@
 import { Db, MongoClient } from 'mongodb'
 import { LockManager } from 'mongo-locks'
 
+import { DISEASE_RISKS_COLLECTION } from '#/data/collections.js'
+import diseaseRisksValidator from '#/data/schemas/disease-risks.schema.json' with { type: 'json' }
+
 describe('#mongoDb', () => {
   let server
 
@@ -25,6 +28,14 @@ describe('#mongoDb', () => {
     test('MongoDb should have expected namespace', () => {
       expect(server.db.namespace).toBe('apha-risk-insights-backend')
     })
+
+    test('Should apply the disease_risks validator on start up', async () => {
+      const [info] = await server.db
+        .listCollections({ name: DISEASE_RISKS_COLLECTION })
+        .toArray()
+
+      expect(info.options.validator).toEqual(diseaseRisksValidator)
+    })
   })
 
   describe('Shut down', () => {
@@ -40,6 +51,37 @@ describe('#mongoDb', () => {
       await server.stop({ timeout: 1000 })
 
       expect(closeSpy).toHaveBeenCalledWith(true)
+    })
+  })
+
+  describe('Shut down failure', () => {
+    beforeAll(async () => {
+      const { createServer } = await import('#/server.js')
+
+      server = await createServer()
+      await server.initialize()
+    })
+
+    test('Should log an error when closing the Mongo client fails', async () => {
+      const closeError = new Error('close failed')
+      const close = server.mongoClient.close.bind(server.mongoClient)
+      vi.spyOn(server.mongoClient, 'close').mockImplementationOnce(
+        async (force) => {
+          await close(force)
+          throw closeError
+        }
+      )
+      const errorSpy = vi.spyOn(server.logger, 'error')
+
+      await server.stop({ timeout: 1000 })
+
+      // Hapi emits 'stop' without awaiting listeners
+      await vi.waitFor(() =>
+        expect(errorSpy).toHaveBeenCalledWith(
+          closeError,
+          'failed to close mongo client'
+        )
+      )
     })
   })
 })
