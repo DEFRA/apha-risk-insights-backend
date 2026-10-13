@@ -9,6 +9,7 @@ import { requestLogger } from '#/plugins/request-logger.js'
 import { mongoDb } from '#/plugins/mongodb.js'
 import { failAction } from '#/common/helpers/fail-action.js'
 import { pulse } from '#/plugins/pulse.js'
+import { problemDetails } from '#/plugins/problem-details.js'
 import { requestTracing } from '#/plugins/request-tracing.js'
 import { metrics } from '@defra/cdp-metrics'
 
@@ -44,6 +45,7 @@ export async function createServer() {
   // requestTracing - trace header logging and propagation
   // secureContext  - loads CA certificates from environment config
   // pulse          - provides shutdown handlers
+  // problemDetails - returns errors as application/problem+json
   // mongoDb        - sets up mongo connection pool and attaches to `server` and `request` objects
   // router         - routes used in the app
   await server.register([
@@ -53,6 +55,7 @@ export async function createServer() {
     secureContext,
     pulse,
     Inert,
+    problemDetails,
     {
       plugin: mongoDb,
       options: config.get('mongo')

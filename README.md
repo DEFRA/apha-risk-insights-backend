@@ -146,10 +146,17 @@ git config --global core.autocrlf false
 
 ## API endpoints
 
-| Endpoint              | Description           |
-| :-------------------- | :-------------------- |
-| `GET: /health`        | Health                |
-| `GET: /documentation` | OpenAPI documentation |
+| Endpoint                       | Description                                |
+| :----------------------------- | :----------------------------------------- |
+| `GET: /health`                 | Health                                     |
+| `GET: /documentation`          | OpenAPI documentation                      |
+| `GET: /risks`                  | Paged, filterable current risk assessments |
+| `GET: /risks/{riskId}`         | One risk assessment with its history       |
+| `GET: /diseases`               | Diseases used by risk assessments          |
+| `GET: /diseases/{diseaseCode}` | One disease used by risk assessments       |
+
+Errors are returned as `application/problem+json`. The OpenAPI spec in
+`docs/openapi/v1.yaml` is the contract.
 
 ## Development helpers
 
