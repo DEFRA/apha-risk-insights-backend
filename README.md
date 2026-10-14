@@ -1,7 +1,7 @@
 # APHA Risk Insights Backend
 
-> **Work in progress.** The service runs and the data layer is in place, but most of the
-> read endpoints in the API contract are not built yet. See [Work in progress](#work-in-progress).
+> **Work in progress.** The API endpoints are built, but the front end and real data ingestion are not
+> finished yet. See [Work in progress](#work-in-progress).
 
 This is the backend API for APHA Risk Insights. It serves disease risk assessments from MongoDB to the
 APHA Risk Insights front end and to other consumers.
@@ -98,7 +98,7 @@ Service components:
 
 | Component                        | Role                                                                                       |
 | :------------------------------- | :----------------------------------------------------------------------------------------- |
-| Hapi.js API (`src/`)             | Serves HTTP. Currently `/health` and `/documentation`. Risk endpoints are not built yet.   |
+| Hapi.js API (`src/`)             | Serves HTTP: health, the risk and disease endpoints, and the API docs.                     |
 | MongoDB (`mongodb` service)      | Stores risks in `disease_risks`, with a `$jsonSchema` validator. Also holds `mongo-locks`. |
 | `mongo-locks` collection         | Used by the app's lock helper for write locks across instances.                            |
 | Floci (`floci` service)          | Local AWS emulator. Running, but no AWS resources are used yet.                            |
@@ -155,20 +155,16 @@ Real APHA data will come through the Python ingestion workload. It is not built 
 
 ## Using the API
 
-Run the service (see [Quick start](#quick-start-docker)), then call it at `http://localhost:3001`.
+The API contract is the OpenAPI spec in [docs/openapi/v1.yaml](docs/openapi/v1.yaml). It describes every
+endpoint, its parameters and its responses. Treat it as the source of truth for the front end and other consumers.
 
-| Method | Path                          | Status                | Description                                      |
-| :----- | :---------------------------- | :-------------------- | :----------------------------------------------- |
-| `GET`  | `/health`                     | Built                 | Liveness check. Returns `{"message":"success"}`. |
-| `GET`  | `/documentation`              | Built                 | Swagger UI for the API contract.                 |
-| `GET`  | `/documentation/openapi.yaml` | Built                 | Raw OpenAPI 3.1 document.                        |
-| `GET`  | `/risks`                      | Documented, not built | List current risk assessments.                   |
-| `GET`  | `/risks/{riskId}`             | Documented, not built | One risk, with its history.                      |
-| `GET`  | `/diseases`                   | Documented, not built | List disease codes and names.                    |
-| `GET`  | `/diseases/{diseaseCode}`     | Documented, not built | One disease.                                     |
+When the service is running locally, the spec is served at:
 
-The documented endpoints are the target contract for the front end. Do not build against them as if they
-work until they appear in `src/routes/` and in the table above.
+- Swagger UI: http://localhost:3001/documentation
+- Raw YAML: http://localhost:3001/documentation/openapi.yaml
+
+Errors are returned as problem details (`application/problem+json`). See
+[return-errors-as-problem-details](adr/return-errors-as-problem-details.adr.md).
 
 ## Working on the service
 
@@ -400,6 +396,7 @@ Significant decisions are recorded in [adr/](adr/). Read them before you change 
 | [validate-with-mongo-jsonschema-only](adr/validate-with-mongo-jsonschema-only.adr.md) | Accepted   | Schema validation is done by MongoDB `$jsonSchema`.        |
 | [hand-rolled-openapi-docs](adr/hand-rolled-openapi-docs.adr.md)                       | Accepted   | OpenAPI is written by hand and served at `/documentation`. |
 | [keep-floci-only-from-aws-stack](adr/keep-floci-only-from-aws-stack.adr.md)           | Accepted   | Floci is the only AWS emulator carried over.               |
+| [return-errors-as-problem-details](adr/return-errors-as-problem-details.adr.md)       | Accepted   | Errors are returned as `application/problem+json`.         |
 | [python-ingestion-kept-separate](adr/python-ingestion-kept-separate.adr.md)           | Accepted   | Python ingestion lives in `ingestion/`, built separately.  |
 
 ## Deployment
@@ -430,8 +427,6 @@ are commented out.
 
 Known gaps. Check here before you assume something works.
 
-- **Risk endpoints.** `/risks`, `/risks/{riskId}`, `/diseases` and `/diseases/{diseaseCode}` are in the OpenAPI
-  contract but not implemented in `src/routes/`.
 - **Real data.** Only dummy data is loaded. The Python ingestion workload is not built. `ingestion/` holds
   mongosh scripts only.
 - **Floci.** Running in the stack, but no S3, SQS or SNS resources are created or used yet.
