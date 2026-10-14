@@ -28,6 +28,7 @@ document is one disease risk, with its current status and its full history of ea
 Key facts:
 
 - **Stack:** Node.js 24, Hapi.js, MongoDB 7, Docker Compose for local development.
+- **Platform:** the service runs on the Defra Core Delivery Platform (CDP). See [Deployment](#deployment).
 - **Data:** the collection is validated by a MongoDB `$jsonSchema` validator that the API applies on startup.
   See [src/data/schemas/disease-risks.schema.json](src/data/schemas/disease-risks.schema.json).
 - **API contract:** [docs/openapi/v1.yaml](docs/openapi/v1.yaml), served by the running service at
@@ -42,7 +43,7 @@ Key facts:
 
 The APHA Risk Insights front end is a separate service and consumes this API.
 
-> **TODO:** add the front-end repository link and deployed URL here.
+- Front-end repository: https://github.com/DEFRA/apha-risk-insights-frontend
 
 ## Quick start (Docker)
 
@@ -418,7 +419,8 @@ The service runs behind the CDP forward proxy. Node.js 24 routes outbound HTTP(S
 environment sets `NODE_USE_ENV_PROXY=1`, `HTTPS_PROXY` and `NO_PROXY`. The service needs no extra proxy
 configuration.
 
-> **TODO:** document the deployment environments and where the service is hosted.
+The service runs on the Defra Core Delivery Platform (CDP). For how CDP works and how services are deployed on it, see
+the CDP documentation: https://portal.cdp-int.defra.cloud/documentation/README.md.
 
 SonarCloud is set up in [sonar-project.properties](sonar-project.properties), but the scan steps in the workflows
 are commented out.
@@ -433,7 +435,6 @@ Known gaps. Check here before you assume something works.
 - **Authentication.** The API contract has no security scheme (`security: []`). Decide access control before
   real data is served.
 - **Front end link.** See [Front end](#front-end).
-- **Deployment details.** See the TODO in [Deployment](#deployment).
 
 ## Licence
 
