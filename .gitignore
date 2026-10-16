@@ -9,3 +9,7 @@ coverage
 .cache
 .eslintcache
 .env
+
+# Local mongodump archives produced when bridging local ingestion to a CDP environment
+# (see adr/bridge-local-ingestion-to-cdp-via-mongodump.adr.md)
+*.archive

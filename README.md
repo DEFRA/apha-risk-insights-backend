@@ -14,6 +14,7 @@ Core delivery platform Node.js Backend Template.
   - [Formatting](#formatting)
     - [Windows prettier issue](#windows-prettier-issue)
 - [API endpoints](#api-endpoints)
+- [Risk PDF ingestion](#risk-pdf-ingestion)
 - [Development helpers](#development-helpers)
   - [MongoDB Locks](#mongodb-locks)
   - [Proxy](#proxy)
@@ -150,6 +151,54 @@ git config --global core.autocrlf false
 | :-------------------- | :-------------------- |
 | `GET: /health`        | Health                |
 | `GET: /documentation` | OpenAPI documentation |
+
+## Risk PDF ingestion
+
+> For a full step-by-step walkthrough, including running from a host machine and troubleshooting
+> common errors, see [docs/risk-pdf-ingestion.md](./docs/risk-pdf-ingestion.md).
+
+> **Note:** `adr/python-ingestion-kept-separate.adr.md` says ingestion should be a separate Python
+> workload. This Node.js script predates that decision and has not yet been reconciled with it.
+
+> **Note:** Step 2 below cannot actually be run from a CDP Terminal session — it has no Node.js,
+> npm, or this repo's code. CDP's hosted MongoDB is also unreachable from a developer laptop. See
+> `adr/bridge-local-ingestion-to-cdp-via-mongodump.adr.md` for the current (prototype-only) way to
+> get locally-ingested data into a CDP-hosted MongoDB.
+
+International Disease Monitoring (IDM) report PDFs are ingested manually in two steps:
+
+1. Upload the PDF to the service's S3 bucket from a CDP terminal session:
+
+   ```bash
+   aws s3 cp ./report.pdf s3://<bucket>/<key>
+   ```
+
+2. From the same (or another) CDP terminal session, run the ingestion script from this project to
+   extract the text, send it to a Bedrock LLM and store the structured result in MongoDB:
+
+   ```bash
+   npm run ingest:risk-pdf -- --bucket <bucket> --key <key> [--model-id <id>] [--region <region>]
+   ```
+
+   `--model-id` and `--region` default to the `bedrock.modelId` / `bedrock.region` config values
+   (see [src/config.js](./src/config.js)).
+
+> **Prototype note:** Bedrock is called with bearer token (API key) auth, not the pod's IAM role.
+> Set `AWS_BEARER_TOKEN_BEDROCK` (a Bedrock API key, not an inference profile ARN) as a secret —
+> in the CDP Portal for deployed environments, or in a local `.env` file for local runs. This
+> bypasses CDP's governed inference-profile/guardrail access path; see
+> `adr/bedrock-bearer-token-auth.adr.md` before using it beyond this prototype.
+
+The prompt sent to the LLM, including the JSON schema it must return, is read from
+[src/prompts/risk-extraction-prompt.txt](./src/prompts/risk-extraction-prompt.txt) so it can be
+tuned without a code change. Each run is recorded in the `ingestion-logs` collection (raw extracted
+text length, raw LLM response, status) for audit purposes, and extracted records are upserted into
+the `disease_risks` collection via [src/data/collections.js](./src/data/collections.js), matching
+the `$jsonSchema` validator described in `adr/validate-with-mongo-jsonschema-only.adr.md`.
+
+For local testing, Floci creates an `apha-risk-insights-local-uploads` bucket on startup
+(see `./compose/floci/start.d/10-setup-resources.sh`) that can be used in place of a real S3
+bucket; Bedrock has no local emulator, so unit tests mock the Bedrock client instead.
 
 ## Development helpers
 

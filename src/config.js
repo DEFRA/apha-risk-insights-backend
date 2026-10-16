@@ -126,6 +126,50 @@ export const config = convict({
       default: 'x-cdp-request-id',
       env: 'TRACING_HEADER'
     }
+  },
+  bedrock: {
+    region: {
+      doc: 'AWS region to invoke Bedrock in',
+      format: String,
+      default: 'us-east-1',
+      env: 'AWS_REGION'
+    },
+    modelId: {
+      doc: 'Bedrock model id used for risk extraction',
+      format: String,
+      default: 'anthropic.claude-3-5-sonnet-20240620-v1:0',
+      env: 'BEDROCK_MODEL_ID'
+    },
+    maxTokens: {
+      doc: 'Max tokens requested from Bedrock for a single extraction call',
+      format: 'nat',
+      default: 4096,
+      env: 'BEDROCK_MAX_TOKENS'
+    },
+    apiKey: {
+      // Bearer token auth (an AWS Bedrock API key), not the pod's IAM role.
+      // Prototype-only: set as a secret in the CDP Portal, never in cdp-app-config.
+      doc: 'Bedrock API key (bearer token) used to authenticate InvokeModel calls',
+      format: String,
+      default: '',
+      env: 'AWS_BEARER_TOKEN_BEDROCK'
+    }
+  },
+  s3: {
+    forcePathStyle: {
+      doc: 'Force path-style S3 addressing. Needed for the local floci S3 emulator, which has no wildcard DNS for virtual-hosted-style bucket subdomains',
+      format: Boolean,
+      default: false,
+      env: 'S3_FORCE_PATH_STYLE'
+    }
+  },
+  ingestion: {
+    promptPath: {
+      doc: 'Path to the prompt template used for risk PDF extraction',
+      format: String,
+      default: './src/prompts/risk-extraction-prompt.txt',
+      env: 'INGESTION_PROMPT_PATH'
+    }
   }
 })
 
