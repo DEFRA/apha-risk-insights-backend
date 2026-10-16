@@ -1,106 +1,104 @@
 # apha-risk-insights-backend
 
-Core delivery platform Node.js Backend Template.
+Modèle de plateforme backend Node.js pour la livraison de services. 🚀
 
-- [Requirements](#requirements)
+- [Prérequis](#prérequis)
   - [Node.js](#nodejs)
-- [Local development](#local-development)
-  - [Setup](#setup)
-  - [Development](#development)
-  - [Testing](#testing)
+- [Développement local](#développement-local)
+  - [Configuration](#configuration)
+  - [Hooks Git](#hooks-git)
+  - [Développement](#développement)
+  - [Tests](#tests)
   - [Production](#production)
-  - [Npm scripts](#npm-scripts)
-  - [Update dependencies](#update-dependencies)
-  - [Formatting](#formatting)
-    - [Windows prettier issue](#windows-prettier-issue)
-- [API endpoints](#api-endpoints)
-- [Development helpers](#development-helpers)
-  - [MongoDB Locks](#mongodb-locks)
+  - [Scripts npm](#scripts-npm)
+  - [Mise à jour des dépendances](#mise-à-jour-des-dépendances)
+  - [Formatage](#formatage)
+    - [Problème Prettier sous Windows](#problème-prettier-sous-windows)
+- [Endpoints de l’API](#endpoints-de-lapi)
+- [Outils d’aide au développement](#outils-daide-au-développement)
+  - [Verrous MongoDB](#verrous-mongodb)
   - [Proxy](#proxy)
 - [Docker](#docker)
-  - [Development image](#development-image)
-  - [Production image](#production-image)
   - [Docker Compose](#docker-compose)
   - [Dependabot](#dependabot)
   - [SonarCloud](#sonarcloud)
 - [Licence](#licence)
-  - [About the licence](#about-the-licence)
+  - [À propos de la licence](#à-propos-de-la-licence)
 
-## Requirements
+## Prérequis
 
 ### Node.js
 
-Please install [Node.js](http://nodejs.org/) `>= v24` and [npm](https://nodejs.org/) `>= v11`. You will find it
-easier to use the Node Version Manager [nvm](https://github.com/creationix/nvm)
+Veuillez installer [Node.js](http://nodejs.org/) `>= v24` et [npm](https://nodejs.org/) `>= v11`. Le gestionnaire de versions Node [nvm](https://github.com/creationix/nvm) peut vous faciliter la tâche.
 
-To use the correct version of Node.js for this application, via nvm:
+Pour utiliser la version de Node.js requise par cette application avec nvm :
 
 ```bash
 cd apha-risk-insights-backend
 nvm use
 ```
 
-## Local development
+## Développement local
 
-### Setup
+### Configuration
 
-Install application dependencies:
+Installez les dépendances de l’application :
 
 ```bash
 npm install
 ```
 
-### Git hooks
+### Hooks Git
 
-Git hooks are managed by [pre-commit](https://pre-commit.com/) (see
-[.pre-commit-config.yaml](./.pre-commit-config.yaml)). On commit they run
-[detect-secrets](https://github.com/Yelp/detect-secrets), ESLint (with `--fix`)
-and Prettier.
+Les hooks Git sont gérés par [pre-commit](https://pre-commit.com/) (voir
+[.pre-commit-config.yaml](./.pre-commit-config.yaml)). Lors d’un commit, ils exécutent
+[detect-secrets](https://github.com/Yelp/detect-secrets), ESLint (avec `--fix`)
+et Prettier.
 
-Install pre-commit, then install the hooks once after cloning:
+Installez pre-commit, puis activez les hooks une fois après le clonage :
 
 ```bash
-pip install pre-commit   # or: pipx install pre-commit
+pip install pre-commit   # ou : pipx install pre-commit
 pre-commit install
 ```
 
-To run the hooks against every file without committing:
+Pour exécuter les hooks sur tous les fichiers sans effectuer de commit :
 
 ```bash
 pre-commit run --all-files
 ```
 
-To run the full check suite (security audit, format check, lint and tests)
-manually or in CI:
+Pour exécuter manuellement ou dans la CI l’ensemble des vérifications (audit de sécurité,
+contrôle du formatage, lint et tests) :
 
 ```bash
 npm run check:all
 ```
 
-#### Secrets baseline
+#### Base de référence des secrets
 
-`.secrets.baseline` records known, accepted findings so `detect-secrets` only
-flags new ones. It was generated once with:
+`.secrets.baseline` répertorie les résultats connus et acceptés afin que
+`detect-secrets` ne signale que les nouveaux résultats. Elle a été générée une fois avec :
 
 ```bash
 pip install detect-secrets
 detect-secrets scan > .secrets.baseline
 ```
 
-If the hook flags a false positive, update the baseline with
-`detect-secrets scan --baseline .secrets.baseline` and commit the result.
+Si le hook signale un faux positif, mettez à jour la base avec
+`detect-secrets scan --baseline .secrets.baseline`, puis ajoutez le résultat au commit.
 
-### Development
+### Développement
 
-To run the application in `development` mode run:
+Pour lancer l’application en mode `development` :
 
 ```bash
 npm run dev
 ```
 
-### Testing
+### Tests
 
-To test the application run:
+Pour tester l’application :
 
 ```bash
 npm run test
@@ -108,122 +106,124 @@ npm run test
 
 ### Production
 
-To mimic the application running in `production` mode locally run:
+Pour simuler localement l’exécution de l’application en mode `production` :
 
 ```bash
 npm start
 ```
 
-### Npm scripts
+### Scripts npm
 
-All available Npm scripts can be seen in [package.json](./package.json).
-To view them in your command line run:
+Tous les scripts npm disponibles sont répertoriés dans [package.json](./package.json).
+Pour les afficher dans votre terminal :
 
 ```bash
 npm run
 ```
 
-### Update dependencies
+### Mise à jour des dépendances
 
-To update dependencies use [npm-check-updates](https://github.com/raineorshine/npm-check-updates):
+Pour mettre à jour les dépendances, utilisez [npm-check-updates](https://github.com/raineorshine/npm-check-updates) :
 
-> The following script is a good start. Check out all the options on
-> the [npm-check-updates](https://github.com/raineorshine/npm-check-updates)
+> Le script suivant constitue un bon point de départ. Consultez toutes les options sur
+> [npm-check-updates](https://github.com/raineorshine/npm-check-updates).
 
 ```bash
 ncu --interactive --format group
 ```
 
-### Formatting
+### Formatage
 
-#### Windows prettier issue
+#### Problème Prettier sous Windows
 
-If you are having issues with formatting of line breaks on Windows update your global git config by running:
+Si vous rencontrez des problèmes de formatage des retours à la ligne sous Windows, mettez à jour la configuration Git globale :
 
 ```bash
 git config --global core.autocrlf false
 ```
 
-## API endpoints
+## Endpoints de l’API
 
-| Endpoint                       | Description                                |
-| :----------------------------- | :----------------------------------------- |
-| `GET: /health`                 | Health                                     |
-| `GET: /documentation`          | OpenAPI documentation                      |
-| `GET: /risks`                  | Paged, filterable current risk assessments |
-| `GET: /risks/{riskId}`         | One risk assessment with its history       |
-| `GET: /diseases`               | Diseases used by risk assessments          |
-| `GET: /diseases/{diseaseCode}` | One disease used by risk assessments       |
+| Endpoint                       | Description                                               |
+| :----------------------------- | :-------------------------------------------------------- |
+| `GET: /health`                 | État de santé                                             |
+| `GET: /documentation`          | Documentation OpenAPI                                     |
+| `GET: /risks`                  | Évaluations des risques actuelles, paginées et filtrables |
+| `GET: /risks/{riskId}`         | Une évaluation du risque avec son historique              |
+| `GET: /diseases`               | Maladies utilisées dans les évaluations des risques       |
+| `GET: /diseases/{diseaseCode}` | Une maladie utilisée dans les évaluations des risques     |
 
-Errors are returned as `application/problem+json`. The OpenAPI spec in
-`docs/openapi/v1.yaml` is the contract.
+Les erreurs sont renvoyées au format `application/problem+json`. Le contrat est défini
+dans la spécification OpenAPI `docs/openapi/v1.yaml`.
 
-## Development helpers
+## Outils d’aide au développement
 
-### MongoDB Locks
+### Verrous MongoDB
 
-If you require a write lock for Mongo you can acquire it via `server.locker` or `request.locker`:
+Si vous avez besoin d’un verrou d’écriture pour MongoDB, vous pouvez l’obtenir via `server.locker` ou `request.locker` :
 
 ```javascript
 async function doStuff(server) {
   const lock = await server.locker.lock('unique-resource-name')
 
   if (!lock) {
-    // Lock unavailable
+    // Verrou indisponible
     return
   }
 
   try {
-    // do stuff
+    // effectuer les opérations
   } finally {
     await lock.free()
   }
 }
 ```
 
-Keep it small and atomic.
+Gardez les opérations courtes et atomiques.
 
-You may use **using** for the lock resource management.
-Note test coverage reports do not like that syntax.
+Vous pouvez utiliser **using** pour gérer la ressource du verrou.
+Notez que les rapports de couverture des tests ne prennent pas bien en charge cette syntaxe.
 
 ```javascript
 async function doStuff(server) {
   await using lock = await server.locker.lock('unique-resource-name')
 
   if (!lock) {
-    // Lock unavailable
+    // Verrou indisponible
     return
   }
 
-  // do stuff
+  // effectuer les opérations
 
-  // lock automatically released
+  // verrou libéré automatiquement
 }
 ```
 
-Helper methods are also available in `/src/helpers/mongo-lock.js`.
+Des méthodes utilitaires sont également disponibles dans `/src/helpers/mongo-lock.js`.
 
 ### Proxy
 
-We are using forward-proxy which is set up by default. Services are automatically configured with the proxy environment variables when deployed.
+Un proxy de transfert est utilisé et configuré par défaut. Lors du déploiement, les services sont automatiquement configurés avec les variables d’environnement du proxy.
 
-Node.js 24 uses these variables to route outbound HTTP(S) requests through the proxy:
+Node.js 24 utilise ces variables pour acheminer les requêtes HTTP(S) sortantes via le proxy :
 
+```text
 NODE_USE_ENV_PROXY=1
 HTTPS_PROXY=...
 NO_PROXY=...
+```
 
-No additional proxy configuration is required in the service.
+Aucune configuration supplémentaire du proxy n’est nécessaire dans le service.
 
 ## Docker
 
-Build:
+Construire l’image :
 
 ```bash
 docker build --no-cache --tag apha-risk-insights-backend .
 ```
 
-Run:
+Lancer le conteneur :
 
 ```bash
 docker run -e PORT=3001 -p 3001:3001 apha-risk-insights-backend
@@ -231,57 +231,56 @@ docker run -e PORT=3001 -p 3001:3001 apha-risk-insights-backend
 
 ### Docker Compose
 
-A local environment with:
+Un environnement local comprend :
 
-- Floci for AWS services (S3, SQS, SNS etc)
+- Floci pour les services AWS (S3, SQS, SNS, etc.)
 - MongoDB
-- This service.
+- Ce service
 
-Compose files:
+Fichiers Compose :
 
-- `compose.yaml` — base services, no published ports.
-- `compose.override.yaml` — host ports for dev. Auto-loaded by `docker compose up` (no `-f` flags).
-- `compose.debug.yaml` — runs the service with the Node inspector attached.
-- `compose.test.yaml` — runs the test suite in a dedicated container, no published ports.
-- `compose.test.watch.yaml` — runs the test suite in watch mode.
+- `compose.yaml` — services de base, sans ports publiés.
+- `compose.override.yaml` — ports hôte pour le développement. Chargé automatiquement par `docker compose up` (sans option `-f`).
+- `compose.debug.yaml` — lance le service avec l’inspecteur Node attaché.
+- `compose.test.yaml` — lance la suite de tests dans un conteneur dédié, sans ports publiés.
+- `compose.test.watch.yaml` — lance la suite de tests en mode watch.
 
 ```bash
-npm run docker:up        # dev stack: apha API + MongoDB + Floci on 3001/27017/4566
-npm run docker:debug     # dev stack with the Node inspector on 9229
-npm run docker:test      # one-shot test run, isolated project, no port clashes with dev
+npm run docker:up        # environnement de développement : API apha + MongoDB + Floci sur 3001/27017/4566
+npm run docker:debug     # environnement de développement avec l’inspecteur Node sur 9229
+npm run docker:test      # exécution unique des tests, projet isolé, sans conflit de ports avec le développement
 npm run docker:test:watch
 ```
 
-The test stack runs under its own Compose project name
-(`apha-risk-insights-backend-test`) so it can run alongside the dev stack
-without clashing on ports, container names, or Mongo data.
+L’environnement de test utilise son propre nom de projet Compose
+(`apha-risk-insights-backend-test`). Il peut ainsi fonctionner en parallèle de
+l’environnement de développement sans conflit de ports, de noms de conteneurs ou de données MongoDB.
 
-Mock AWS resources can be created when Floci starts up by editing the scripts in `./compose/floci/start.d/`.
-MongoDB records can also be created when Mongo starts by editing the scripts in `./compose/mongo/`.
+Vous pouvez créer des ressources AWS simulées au démarrage de Floci en modifiant les scripts dans `./compose/floci/start.d/`.
+Vous pouvez également créer des enregistrements MongoDB au démarrage de MongoDB en modifiant les scripts dans `./compose/mongo/`.
 
 ### Dependabot
 
-We have added an example dependabot configuration file to the repository. You can enable it by renaming
-the [.github/example.dependabot.yml](.github/example.dependabot.yml) to `.github/dependabot.yml`
+Un exemple de fichier de configuration Dependabot est présent dans le dépôt. Pour l’activer,
+renommez [.github/example.dependabot.yml](.github/example.dependabot.yml) en `.github/dependabot.yml`.
 
 ### SonarCloud
 
-Instructions for setting up SonarCloud can be found in [sonar-project.properties](./sonar-project.properties)
+Les instructions de configuration de SonarCloud se trouvent dans [sonar-project.properties](./sonar-project.properties).
 
 ## Licence
 
-THIS INFORMATION IS LICENSED UNDER THE CONDITIONS OF THE OPEN GOVERNMENT LICENCE found at:
+CES INFORMATIONS SONT SOUMISES AUX CONDITIONS DE L’OPEN GOVERNMENT LICENCE, disponible à l’adresse :
 
 <http://www.nationalarchives.gov.uk/doc/open-government-licence/version/3>
 
-The following attribution statement MUST be cited in your products and applications when using this information.
+L’attribution suivante DOIT être mentionnée dans vos produits et applications lorsque vous utilisez ces informations.
 
 > Contains public sector information licensed under the Open Government license v3
 
-### About the licence
+### À propos de la licence
 
-The Open Government Licence (OGL) was developed by the Controller of Her Majesty's Stationery Office (HMSO) to enable
-information providers in the public sector to license the use and re-use of their information under a common open
-licence.
+L’Open Government Licence (OGL) a été élaborée par le Controller of Her Majesty's Stationery Office (HMSO) afin de permettre
+aux fournisseurs d’informations du secteur public d’autoriser l’utilisation et la réutilisation de leurs informations dans le cadre d’une licence libre commune.
 
-It is designed to encourage use and re-use of information freely and flexibly, with only a few conditions.
+Elle vise à encourager l’utilisation et la réutilisation des informations de manière libre et souple, sous réserve de quelques conditions.
