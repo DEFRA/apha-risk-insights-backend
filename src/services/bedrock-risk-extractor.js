@@ -9,7 +9,10 @@ function stripCodeFence(text) {
   return match ? match[1] : text.trim()
 }
 
-export async function extractRiskData(bedrockClient, { modelId, maxTokens, prompt }) {
+export async function extractRiskData(
+  bedrockClient,
+  { modelId, maxTokens, prompt }
+) {
   const command = new InvokeModelCommand({
     modelId,
     contentType: 'application/json',
@@ -41,7 +44,9 @@ export async function extractRiskData(bedrockClient, { modelId, maxTokens, promp
     abortEarly: false
   })
   if (error) {
-    throw new Error(`Bedrock response failed schema validation: ${error.message}`)
+    throw new Error(
+      `Bedrock response failed schema validation: ${error.message}`
+    )
   }
 
   return { records: value, rawResponseText }
