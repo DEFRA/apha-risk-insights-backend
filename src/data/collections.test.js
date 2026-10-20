@@ -75,7 +75,10 @@ describe('#data/collections', () => {
     })
 
     test('keeps strain-specific records separate', async () => {
-      const disease = { code: 'HPAI', name: 'Highly Pathogenic Avian Influenza' }
+      const disease = {
+        code: 'HPAI',
+        name: 'Highly Pathogenic Avian Influenza'
+      }
 
       await upsertDiseaseRisk(
         db,
