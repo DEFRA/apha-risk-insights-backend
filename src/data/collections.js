@@ -1,8 +1,10 @@
 import { randomUUID } from 'node:crypto'
 
 import diseaseRisksValidator from './schemas/disease-risks.schema.json' with { type: 'json' }
+import wahisOutbreakValidator from './schemas/wahis-outbreak.schema.json' with { type: 'json' }
 
 export const DISEASE_RISKS_COLLECTION = 'disease_risks'
+export const WAHIS_OUTBREAKS_COLLECTION = 'wahis_outbreaks'
 const INGESTION_LOGS_COLLECTION = 'ingestion-logs'
 
 const NAMESPACE_EXISTS = 48
@@ -15,7 +17,8 @@ const VALIDATION_OPTIONS = {
 }
 
 const VALIDATED_COLLECTIONS = [
-  { name: DISEASE_RISKS_COLLECTION, validator: diseaseRisksValidator }
+  { name: DISEASE_RISKS_COLLECTION, validator: diseaseRisksValidator },
+  { name: WAHIS_OUTBREAKS_COLLECTION, validator: wahisOutbreakValidator }
 ]
 
 /**
@@ -51,6 +54,9 @@ export async function ensureIndexes(db) {
   await db
     .collection(DISEASE_RISKS_COLLECTION)
     .createIndex({ 'disease.code': 1, strain: 1 })
+  await db
+    .collection(WAHIS_OUTBREAKS_COLLECTION)
+    .createIndex({ 'source.outbreakId': 1 }, { unique: true })
 }
 
 /**

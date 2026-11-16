@@ -207,6 +207,23 @@ For local testing, Floci creates an `apha-risk-insights-local-uploads` bucket on
 (see `./compose/floci/start.d/10-setup-resources.sh`) that can be used in place of a real S3
 bucket; Bedrock has no local emulator, so unit tests mock the Bedrock client instead.
 
+## WAHIS outbreak load
+
+WAHIS outbreak records from `apha-insights-ingestion` are stored in the `wahis_outbreaks` collection.
+This is a manual load for the spike: download the transformed records from S3, then load them from
+the files:
+
+```bash
+npm run load:wahis -- <file or directory>...
+```
+
+Each record is checked against the collection's `$jsonSchema` (see
+[src/data/schemas/wahis-outbreak.schema.json](./src/data/schemas/wahis-outbreak.schema.json)). A
+record that does not match is reported with the field and rule that failed, and is not stored. A
+record for an outbreak already in the collection replaces it. The command exits with code 1 if any
+record was rejected. Loading from SQS and checking the schema version are not built yet (see
+`adr/validate-wahis-outbreaks-on-load-by-schema-version.adr.md`).
+
 ## Development helpers
 
 ### MongoDB Locks

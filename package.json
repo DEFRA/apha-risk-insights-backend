@@ -22,6 +22,7 @@
     "format": "prettier --write \"**/*.{cjs,js,json,md}\"",
     "format:check": "prettier --check \"**/*.{cjs,js,json,md}\"",
     "check:all": "npm run security-audit && npm run format:check && npm run lint && npm test",
+    "load:wahis": "node --env-file-if-exists=.env src/scripts/load-wahis-outbreaks.js",
     "ingest:risk-pdf": "node --env-file-if-exists=.env src/scripts/ingest-risk-pdf.js",
     "lint": "eslint --cache --cache-strategy content \"**/*.{cjs,js}\"",
     "lint:fix": "npm run lint -- --fix",
